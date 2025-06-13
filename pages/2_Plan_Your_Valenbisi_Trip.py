@@ -3,7 +3,7 @@ import pandas as pd
 
 st.title("Available Bikes and Stands")
 st.write("Are you travelling using valenbisi in the future?")
-st.write("Use data to check if there is a free bike at your starting station, and a free parking at your end station!")
+st.write("Use data to check if you can expect a free bike at your starting station, and a free parking at your end station!")
 
 
 @st.cache_data

@@ -11,7 +11,7 @@ st.write("Use our machine learning model to predict available parking stands!")
 
 @st.cache_data
 def load_model():
-    return joblib.load("model.pkl")
+    return joblib.load("rf_model2.pkl")
 
 @st.cache_data
 def load_station_info():
@@ -37,7 +37,6 @@ def get_station_map(station_data):
     return m
 
 st.write("## Predict Free stands at your end station")
-st.write(" Use our machine learning model to see if. This assumes")
 
 # Get station info and current date(from main page)
 station_info = load_station_info()
@@ -87,29 +86,34 @@ if st.session_state['show_map']:
 selected_station = st.session_state['selected_station']
 st.write(f"Selected station: {selected_station}")
 
-st.write("## Prediction")
-
 # Get current count
 current_free_stands = new_data[new_data['Direction'] == selected_station]['Free_stand'].iloc[0]
 
 # Create input for ml model
+# (same as feature_engineering in rf_model)
 x = station_info[station_info['Direction'] == selected_station].iloc[0]
 x['season'] = pd.to_datetime(current_datetime).month % 12 // 3 + 1
 x['is_weekday'] = 1 if pd.to_datetime(current_datetime).weekday() < 5 else 0
 x['hour_sin'] = np.sin(2 * np.pi * pd.to_datetime(current_datetime).hour / 24)
 
+time_diff = st.number_input("How many minutes until arrival?", min_value=1, max_value=120, value=15, step=1)
+
+x['Prev_Free_stand'] = current_free_stands
+x['time_diff'] = time_diff # TODO input for how long user think they will take for 
+
 # Run model prediction
-model, feature_names = load_model()
-model_input = x[feature_names].values.reshape(1, -1)
-prediction = model.predict(model_input)
+model = load_model()
+feature_names = model.feature_names_in_
+model_input = pd.DataFrame([x[feature_names]]) 
+prediction = model.predict(model_input)[0]
 
 # round down to closest int
-prediction_floor = int(prediction[0])
+prediction_floor = int(prediction)
 
-col1, col2 = st.columns(2)
+col1, col2 = st.columns([3, 1])
 with col1:
-    st.write(f"Current free parking stand:")
-    st.write(f"Predicted free parking stand:")
+    st.write(f"### Currently free parking stands:")
+    st.write(f"### Predicted free parking stands:")
 with col2:
-    st.write(f"{current_free_stands}")
-    st.write(f"{prediction_floor}")
+    st.write(f"### {current_free_stands}")
+    st.write(f"### {prediction_floor}")
