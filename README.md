@@ -2,7 +2,7 @@
 
 Emilie Kjeldsberg Sivertsen and Nathalia Thu
 
-webpage: https://edmproject-nahpw7sfnms2fybjvh5adm.streamlit.app/Predict_Free_Parking_Space
+webpage: https://edmproject-nahpw7sfnms2fybjvh5adm.streamlit.app/
 
 ## Content
 
