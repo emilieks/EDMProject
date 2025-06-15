@@ -2,11 +2,7 @@
 
 Emilie Kjeldsberg Sivertsen and Nathalia Thu
 
-## Links
-
 webpage: 
-
-video: 
 
 ## Content
 
@@ -22,6 +18,6 @@ Streamlit used to create application.
 
 `streamlit run app.py`
 
-## Notebooks
+### Notebooks
 
 All notebooks used to read data, clean tables, EDA and create ML models are in the folder `notebooks`.
