@@ -62,7 +62,7 @@ date_string = new_data.iloc[0]['Update_date']
 date_datetime = pd.to_datetime(date_string)
 
 pretty_date = date_datetime.strftime("%B %d, %Y, %I:%M %p")
-selection = st.radio("", ["Free Bikes", "Free Stands"])
+selection = st.radio("", ["Free Bikes", "Free Stands"], horizontal=True)
 st.write(f"Number of {selection} at last update, {pretty_date}")
 target = 'Free_bici' if selection=='Free Bikes' else 'Free_stand'
 count_map = get_count_map(new_data, target)

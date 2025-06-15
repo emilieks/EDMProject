@@ -11,7 +11,7 @@ st.write("Use our machine learning model to predict available parking stands!")
 
 @st.cache_data
 def load_model():
-    return joblib.load("rf_model2.pkl")
+    return joblib.load("rf_model.pkl")
 
 @st.cache_data
 def load_station_info():
@@ -21,6 +21,10 @@ def load_station_info():
 def load_new():
     # ideally this would continuously come from source
     return pd.read_csv('streamlitdata/NewestData.csv')
+
+@st.cache_data
+def load_3new():
+    return pd.read_csv('streamlitdata/3NewestData.csv')
 
 @st.cache_data
 def get_station_map(station_data):
@@ -99,7 +103,18 @@ x['hour_sin'] = np.sin(2 * np.pi * pd.to_datetime(current_datetime).hour / 24)
 time_diff = st.number_input("How many minutes until arrival?", min_value=1, max_value=120, value=15, step=1)
 
 x['Prev_Free_stand'] = current_free_stands
-x['time_diff'] = time_diff # TODO input for how long user think they will take for 
+x['time_diff'] = time_diff
+
+# Get earlier data for model, and add to x
+new_data_3  = load_3new()
+new_data_3['Update_date'] = pd.to_datetime(new_data_3['Update_date'])
+new_data_3_station = new_data_3[new_data_3['Direction']==selected_station].sort_values(by='Update_date', ascending=False) # first value, last measure
+x['Prev2_Free_stand'] = new_data_3_station['Free_stand'].iloc[1]
+x['Prev3_Free_stand'] = new_data_3_station['Free_stand'].iloc[2]
+
+update_dates = new_data_3_station['Update_date'].reset_index(drop=True)
+x['time_diff_2'] = (update_dates.iloc[0] - update_dates.iloc[1]).total_seconds() / 60
+x['time_diff_3'] = (update_dates.iloc[0] - update_dates.iloc[2]).total_seconds() / 60
 
 # Run model prediction
 model = load_model()
